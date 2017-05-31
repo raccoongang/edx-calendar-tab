@@ -30,3 +30,4 @@ ratings:
   - "**.py"
 exclude_paths:
 - "**/vendor/**/*"
+- "**/migrations/*.py"
