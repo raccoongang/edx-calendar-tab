@@ -1,6 +1,7 @@
-Google Calendar LMS tab
------------------------
-IMPORTANT NOTE: this is a draft README for not fully implemented yet feature.
+**NOTE:** this is a draft README for not fully implemented yet feature.
+
+# edx-calendar-tab
+Shared calendar for Open edX Courseware
 
 
 Django application that allows course staff enable new "Calendar" tab from CMS (studio).
