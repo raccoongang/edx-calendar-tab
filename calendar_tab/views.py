@@ -60,13 +60,13 @@ def _create_base_calendar_view_context(request, course_id):
     }
 
 
-def has_permission(user, event):
+def has_permission(user, api_event):
     try:
-        db_event = CourseCalendarEvent.objects.get(event_id=event['id'])
-        return user.username == db_event.edx_user or is_staff(user, event['course_id'])
+        db_event = CourseCalendarEvent.objects.get(event_id=api_event['id'])
+        return user.username == db_event.edx_user or is_staff(user, db_event.course_calendar.course_id)
     except (ObjectDoesNotExist, KeyError) as e:
         log.warn(e)
-        return is_staff(user, event['course_id'])
+        return False
 
 
 def is_staff(user, course_id):
@@ -141,11 +141,12 @@ def events_view(request, course_id):
     try:
         response = gcal_service.events().list(calendarId=calendar_id, pageToken=None).execute()
         events = [{
-                      "id": event["id"],
-                      "text": event["summary"],
-                      "start_date": from_google_datetime(event["start"]["dateTime"]),
-                      "end_date": from_google_datetime(event["end"]["dateTime"])
-                  } for event in response['items']]
+                      "id": api_event["id"],
+                      "text": api_event["summary"],
+                      "start_date": from_google_datetime(api_event["start"]["dateTime"]),
+                      "end_date": from_google_datetime(api_event["end"]["dateTime"]),
+                      "readonly": not has_permission(request.user, api_event)
+                  } for api_event in response['items']]
     except Exception as e:
         # TODO: handle errors
         log.exception(e)
