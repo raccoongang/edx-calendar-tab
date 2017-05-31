@@ -1,0 +1,4 @@
+include README.rst
+recursive-include calendar_tab/static *
+recursive-include calendar_tab/templates *
+recursive-include docs *
