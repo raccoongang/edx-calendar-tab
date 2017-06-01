@@ -9,16 +9,24 @@ From LMS side appears new "Calendar" tab with google calendar associated with cu
 New calendar events may be created by any enrolled student.
 Calendar may be shared by stuff personal with provided google accounts (with update permission).
 
-1) Install Package
+1) INSTALLATION
+
+1.1) Install Package
 
 installing manually for evaluation and testing:
 
     sudo su - edxapp -s /bin/bash
     . edxapp_env
     pip install --upgrade https://github.com/raccoongang/edx-calendar-tab/tarball/master
+    
+1.2) Production installation
+
+#TBD 
 
 
-2) Configure edx-platform
+2) CONFIGURATION
+
+2.1) Configure edx-platform
 
 Add "edx-calendat-tab" to installed Django apps
 
@@ -31,8 +39,9 @@ In /edx/app/edxapp/lms.envs.json, add to the list of FEATURES:
     "ENABLE_CALENDAR": true,
     "GOOGLE_CALENDAR_TAB_PRIVATE_KEY_URL": "/edx/app/edxapp/edx-calendar-tab-google-api-private-key.json"
 
+2.2) Configure google service account
 
-
+#TBD
 
 
 3) BASIC USAGE
