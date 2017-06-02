@@ -17,7 +17,9 @@ installing manually for evaluation and testing:
 
     sudo su - edxapp -s /bin/bash
     . edxapp_env
-    pip install --upgrade https://github.com/raccoongang/edx-calendar-tab/tarball/master
+    pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@wowkalucky/event_permissions#egg=edx-calendar-tab
+
+
 
 1.2) Production installation
 
@@ -28,13 +30,60 @@ installing manually for evaluation and testing:
 
 2.1) Configure edx-platform
 
-Add "edx-calendat-tab" to installed Django apps
+Add "edx-calendar-tab" to installed Django apps
 
-In /edx/app/edxapp/lms.env.json [and /edx/app/edxapp/cms.env.json], add
+In "/edx/app/edxapp/lms.env.json" add
 
     "ADDL_INSTALLED_APPS": ["calendar_tab"],
 
-In /edx/app/edxapp/lms.envs.json, add to the list of FEATURES:
+In "/edx/app/edxapp/edx-platform/lms/envs/common.py" add
+
+    MAKO_TEMPLATES['main']: [
+        ...
+        '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/templates',
+    ]
+
+    PIPELINE_CSS = {
+        ...
+        'style-calendar-tab': {
+            'source_filenames': [
+                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/css/vendor/scheduler/dhtmlxscheduler.css',
+            ],
+            'output_filename': 'css/calendar-tab.css',
+        }
+    }
+
+    PIPELINE_JS = {
+        ...
+        'calendar_tab': {
+            'source_filenames': [
+                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/js/calendar-tab.js',
+            ],
+            'output_filename': 'js/calendar_tab.js',
+        },
+        'calendar_tab_vendor': {
+            'source_filenames': [
+                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/js/vendor/scheduler/_dhtmlxscheduler.js',
+                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/js/vendor/scheduler/dhtmlxscheduler_readonly.js',
+            ],
+            'output_filename': 'js/calendar_tab_vendor.js',
+        },
+    }
+
+In "/edx/app/edxapp/edx-platform/lms/urls.py" add __before__ static_tab urls:
+
+    if settings.FEATURES.get('ENABLE_CALENDAR'):
+        urlpatterns += (
+           url(
+               r'^courses/{}/tab/calendar/'.format(
+                   settings.COURSE_ID_PATTERN,
+               ),
+               include('calendar_tab.urls'),
+               name='calendar_tab_endpoints',
+           ),
+        )
+
+In "/edx/app/edxapp/lms.envs.json", add to the list of FEATURES:
 
     "ENABLE_CALENDAR": true,
     "GOOGLE_CALENDAR_TAB_PRIVATE_KEY_URL": "/edx/app/edxapp/edx-calendar-tab-google-api-private-key.json"
