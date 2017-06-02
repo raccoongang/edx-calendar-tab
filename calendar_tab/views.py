@@ -9,13 +9,14 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from opaque_keys.edx.keys import CourseKey
-from web_fragments.fragment import Fragment
 
+from opaque_keys.edx.keys import CourseKey
 from courseware.access import has_access
 from courseware.courses import get_course_with_access
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
-from openedx.features.calendar_tab.models import CourseCalendar, CourseCalendarEvent
+from web_fragments.fragment import Fragment
+
+from .models import CourseCalendar, CourseCalendarEvent
 from .utils import gcal_service
 
 log = logging.getLogger(__name__)
