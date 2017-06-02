@@ -102,8 +102,26 @@ _you'll need to put it on your server into "/edx/app/edxapp/", for example_;
 
 3) BASIC USAGE
 
-    From the very beginning after calendar tab is enabled, there is no any google calendar associated with current course,
-so staff has to initialize one at first time.
-    After initialization new google calendar is rendered on the tab.
-    Students can create/update/delete events.
-    Staff can share course calendar with other google accounts.
+  From the very beginning after calendar tab is enabled, there is no any google calendar associated with current course,
+so staff has to initialize one at first time by submitting "Initiate course google calendar" button.
+
+  Application then creates new Google Calendar (from behalf of Google service account) and associates it with the current Course.
+  This Calendar is private and can't be seen out of service account.
+
+  After initialization new google calendar is rendered on the tab.
+
+  Students and Staff can create/update/delete events.
+  Students can't update/delete event they not own.
+  Staff can.
+
+  Events may be edited via dialog box(on double click), by dragging (whole event or its start/end border).
+
+
+ADDITIONAL NOTES:
+
+  As the OpenEdx [documentation](https://openedx.atlassian.net/wiki/display/AC/Adding+a+new+course+tab) says:
+
+    The course stores a static list of its tabs in the database, and this list is only updated when one of the following actions take place:
+    - You create a new course.
+    - You update the advanced settings for your course.
+    This means that if you have a pre-existing course then it won't immediately show a tab even after you've registered the new entry point.
