@@ -5,6 +5,7 @@
     scheduler.init('scheduler_here', new Date(), "month");
     scheduler.load("events/", "json");
 
+    // Makes calendar events not editable (respects "readonly" property):
     function block_readonly(id) {
       if (!id) return true;
       return !this.getEvent(id).readonly;
