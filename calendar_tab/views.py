@@ -167,98 +167,125 @@ def events_view(request, course_id):
         return JsonResponse(data=events, status=200, safe=False)
 
 
+def _get_event_data(post_data, course_id):
+    event = {
+        'id': post_data.get('id'),
+        'summary': post_data['text'],
+        'location': post_data.get('description', ''),
+        'description': post_data.get('description', ''),
+        'start': {
+            'dateTime': to_google_datetime(post_data['start_date']),
+        },
+        'end': {
+            'dateTime': to_google_datetime(post_data['end_date']),
+        },
+        'course_id': course_id,
+    }
+    return event
+
+
+def _create_event(request, course_id, response):
+    """
+    Creates new event in google calendar and returns feedback.
+    """
+    calendar_id = get_calendar_id_by_course_id(course_id)
+    event = _get_event_data(request.POST, course_id)
+    try:
+        new_event = gcal_service.events().insert(calendarId=calendar_id,
+                                                 body=event).execute()
+    except Exception as e:
+        # TODO: handle errors
+        log.exception(e)
+        status = 500
+    else:
+        cc_event = CourseCalendarEvent(course_calendar_id=calendar_id,
+                                       event_id=new_event['id'],
+                                       edx_user=request.user)
+        cc_event.save()
+
+        status = 201
+        response.update({"action": "inserted",
+                         "tid": new_event['id']})
+
+    return status, response
+
+
+def _update_event(request, course_id, response):
+    """
+    Updates given event in google calendar and returns feedback.
+    """
+    calendar_id = get_calendar_id_by_course_id(course_id)
+    event = _get_event_data(request.POST, course_id)
+    try:
+        if has_permission(request.user, event):
+            updated_event = gcal_service.events().update(calendarId=calendar_id,
+                                                         eventId=event['id'],
+                                                         body=event).execute()
+            status = 200
+            response.update({"action": "updated",
+                             "sid": event["id"],
+                             "tid": updated_event["id"]})
+        else:
+            status = 403
+            response["tid"] = event["id"]
+
+    except Exception as e:
+        # TODO: handle errors
+        log.exception(e)
+        status = 500
+
+    return status, response
+
+
+def _delete_event(request, course_id, response):
+    """
+    Deletes given event in google calendar and returns feedback.
+    """
+    calendar_id = get_calendar_id_by_course_id(course_id)
+    event = _get_event_data(request.POST, course_id)
+    try:
+        if has_permission(request.user, event):
+            gcal_service.events().delete(calendarId=calendar_id,
+                                         eventId=event['id']).execute()
+            try:
+                CourseCalendarEvent.objects.get(event_id=event['id']).delete()
+            except ObjectDoesNotExist as e:
+                log.warn(e)
+
+            status = 200
+            response.update({"action": "deleted",
+                             "sid": event["id"]})
+        else:
+            status = 403
+            response["tid"] = event["id"]
+
+    except Exception as e:
+        # TODO: handle errors
+        log.exception(e)
+        status = 500
+
+    return status, response
+
+
 @csrf_exempt
 def dataprocessor_view(request, course_id):
     """
     Processes insert/update/delete event requests.
     """
-    calendar_id = get_calendar_id_by_course_id(course_id)
     status = 401
     response = {'action': 'error',
                 'sid': request.POST['id'],
                 'tid': '0'}
 
-    def get_event_data(post_data):
-        event = {
-            'id': post_data.get('id'),
-            'summary': post_data['text'],
-            'location': post_data.get('description', ''),
-            'description': post_data.get('description', ''),
-            'start': {
-                'dateTime': to_google_datetime(post_data['start_date']),
-            },
-            'end': {
-                'dateTime': to_google_datetime(post_data['end_date']),
-            },
-            'course_id': course_id,
-        }
-        return event
-
     if request.method == 'POST':
         command = request.POST['!nativeeditor_status']
 
         if command == 'inserted':
-            event = get_event_data(request.POST)
-            try:
-                new_event = gcal_service.events().insert(calendarId=calendar_id,
-                                                         body=event).execute()
-            except Exception as e:
-                # TODO: handle errors
-                log.exception(e)
-                status = 500
-            else:
-                cc_event = CourseCalendarEvent(course_calendar_id=calendar_id,
-                                               event_id=new_event['id'],
-                                               edx_user=request.user)
-                cc_event.save()
-
-                status = 201
-                response = {"action": "inserted",
-                            "sid": request.POST['id'],
-                            "tid": new_event['id']}
-
+            status, response = _create_event(request, course_id, response)
         elif command == 'updated':
-            event = get_event_data(request.POST)
-            try:
-                if has_permission(request.user, event):
-                    updated_event = gcal_service.events().update(calendarId=calendar_id,
-                                                                 eventId=event['id'],
-                                                                 body=event).execute()
-                    status = 200
-                    response = {"action": "updated",
-                                "sid": event['id'],
-                                "tid": updated_event['id']}
-                else:
-                    status = 403
-                    response['tid'] = event['id']
-
-            except Exception as e:
-                # TODO: handle errors
-                log.exception(e)
-                status = 500
-
+            status, response = _update_event(request, course_id, response)
         elif command == 'deleted':
-            event = get_event_data(request.POST)
-            try:
-                if has_permission(request.user, event):
-                    gcal_service.events().delete(calendarId=calendar_id,
-                                                 eventId=event['id']).execute()
-                    try:
-                        CourseCalendarEvent.objects.get(event_id=event['id']).delete()
-                    except ObjectDoesNotExist as e:
-                        log.warn(e)
-
-                    status = 200
-                    response = {"action": "deleted",
-                                "sid": event['id']}
-                else:
-                    status = 403
-                    response['tid'] = event['id']
-
-            except Exception as e:
-                # TODO: handle errors
-                log.exception(e)
-                status = 500
+            status, response = _delete_event(request, course_id, response)
 
     return JsonResponse(data=response, status=status, safe=False)
 
