@@ -14,7 +14,7 @@ setup(
                       "google-api-python-client==1.6.2"],
     requires=[],
     packages=["calendar_tab"],
-    description='Open Edx Calendar tab (based on Google Calendar service',
+    description='Open Edx Calendar tab (based on Google Calendar service)',
     long_description=README,
     entry_points={
         "openedx.course_tab": [
