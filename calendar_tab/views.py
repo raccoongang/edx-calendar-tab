@@ -16,6 +16,9 @@ from courseware.courses import get_course_with_access
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from web_fragments.fragment import Fragment
 
+import pytz
+from dateutil import parser
+
 from .models import CourseCalendar, CourseCalendarEvent
 from .utils import gcal_service
 
@@ -27,7 +30,9 @@ def from_google_datetime(g_datetime):
     Formats google calendar API datetime string to dhxscheduler datetime string.
     Example: "2017-04-25T16:00:00-04:00" >> "04/25/2017 16:00"
     """
-    return datetime.strptime(g_datetime[:-6], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d/%Y %H:%M")
+    dt = parser.parse(g_datetime)
+    local_dt = dt.astimezone(pytz.timezone(settings.TIME_ZONE))
+    return local_dt.strftime("%m/%d/%Y %H:%M")
 
 
 def to_google_datetime(dhx_datetime):
