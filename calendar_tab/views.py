@@ -23,14 +23,16 @@ log = logging.getLogger(__name__)
 
 
 def from_google_datetime(g_datetime):
-    """Formats google calendar API datetime string to dhxscheduler datetime string.
+    """
+    Formats google calendar API datetime string to dhxscheduler datetime string.
     Example: "2017-04-25T16:00:00-04:00" >> "04/25/2017 16:00"
     """
     return datetime.strptime(g_datetime[:-6], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d/%Y %H:%M")
 
 
 def to_google_datetime(dhx_datetime):
-    """Formats google dhxscheduler datetime string to calendar API datetime string.
+    """
+    Formats google dhxscheduler datetime string to calendar API datetime string.
     Example: "04/25/2017 16:00" >> "2017-04-25T16:00:00-04:00"
     """
     dt_unaware = datetime.strptime(dhx_datetime, "%m/%d/%Y %H:%M")
@@ -39,7 +41,8 @@ def to_google_datetime(dhx_datetime):
 
 
 def get_calendar_id_by_course_id(course_id):
-    """Returns google calendar ID by given course key
+    """
+    Returns google calendar ID by given course key.
     """
     course_calendar_data = CourseCalendar.objects.filter(course_id=course_id).values('course_id', 'calendar_id').first()
     calendar_id = course_calendar_data.get('calendar_id') if course_calendar_data else ''
@@ -47,7 +50,8 @@ def get_calendar_id_by_course_id(course_id):
 
 
 def _create_base_calendar_view_context(request, course_id):
-    """Returns the default template context for rendering calendar view.
+    """
+    Returns the default template context for rendering calendar view.
     """
     user = request.user
     course_key = CourseKey.from_string(course_id)
@@ -62,6 +66,9 @@ def _create_base_calendar_view_context(request, course_id):
 
 
 def has_permission(user, api_event):
+    """
+    Has given User the permission to edit given Event?
+    """
     try:
         db_event = CourseCalendarEvent.objects.get(event_id=api_event['id'])
         return user.username == db_event.edx_user or is_staff(user, db_event.course_calendar.course_id)
@@ -71,13 +78,17 @@ def has_permission(user, api_event):
 
 
 def is_staff(user, course_id):
+    """
+    Is this User the Personnel of the Course with this ID?
+    """
     course_key = CourseKey.from_string(course_id)
     course = get_course_with_access(user, 'load', course_key, check_if_enrolled=True)
     return bool(has_access(user, 'staff', course, course_id))
 
 
 class CalendarTabFragmentView(EdxFragmentView):
-    """Component implementation of the calendar tab.
+    """
+    Component implementation of the calendar tab.
     """
     def render_to_fragment(self, request, course_id=None, **kwargs):
         """
@@ -136,7 +147,8 @@ class CalendarTabFragmentView(EdxFragmentView):
 
 
 def events_view(request, course_id):
-    """Returns all google calendar events for given course
+    """
+    Returns all google calendar events for given course.
     """
     calendar_id = get_calendar_id_by_course_id(course_id)
     try:
@@ -158,7 +170,8 @@ def events_view(request, course_id):
 
 @csrf_exempt
 def dataprocessor_view(request, course_id):
-    """Processes insert/update/delete event requests
+    """
+    Processes insert/update/delete event requests.
     """
     calendar_id = get_calendar_id_by_course_id(course_id)
     status = 401
@@ -252,7 +265,8 @@ def dataprocessor_view(request, course_id):
 
 
 class InitCalendarView(View):
-    """Creates google calendar and associates it with course
+    """
+    Creates google calendar and associates it with course.
     """
     def post(self, request, *args, **kwargs):
         course_id = request.POST.get('courseId')
