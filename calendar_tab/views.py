@@ -123,8 +123,7 @@ class CalendarTabFragmentView(EdxFragmentView):
         works in conjunction with the Django pipeline to ensure that in development mode
         the files are loaded individually, but in production just the single bundle is loaded.
         """
-        dependencies = set()
-        dependencies.update(self.get_js_dependencies('calendar_tab_vendor'))
+        dependencies = set(self.get_js_dependencies('calendar_tab_vendor'))
         return list(dependencies)
 
     def js_dependencies(self):
@@ -183,8 +182,8 @@ def dataprocessor_view(request, course_id):
         event = {
             'id': post_data.get('id'),
             'summary': post_data['text'],
-            'location': post_data.get('location') or '',
-            'description': post_data.get('description') or '',
+            'location': post_data.get('description', ''),
+            'description': post_data.get('description', ''),
             'start': {
                 'dateTime': to_google_datetime(post_data['start_date']),
             },
