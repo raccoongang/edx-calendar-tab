@@ -41,8 +41,8 @@ def to_google_datetime(dhx_datetime):
 def get_calendar_id_by_course_id(course_id):
     """Returns google calendar ID by given course key
     """
-    course_calendar_data = CourseCalendar.objects.filter(course_id=course_id).values('course_id', 'calendar_id')
-    calendar_id = course_calendar_data[0].get('calendar_id') if course_calendar_data else ''
+    course_calendar_data = CourseCalendar.objects.filter(course_id=course_id).values('course_id', 'calendar_id').first()
+    calendar_id = course_calendar_data.get('calendar_id') if course_calendar_data else ''
     return calendar_id
 
 
