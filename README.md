@@ -1,4 +1,3 @@
-
 # edx-calendar-tab
 
 Shared calendar for Open edX Courseware
@@ -18,6 +17,7 @@ Calendar may be shared by stuff personal with provided google accounts
 Installing manually for evaluation and testing:
 
     sudo -sHu edxapp
+    cd
     . edxapp_env
     pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@wowkalucky/event_permissions#egg=edx-calendar-tab
 
@@ -104,27 +104,27 @@ In "/edx/app/edxapp/lms.envs.json", add to the list of FEATURES:
 
 # Basic usage
 
-  From the very beginning after calendar tab is enabled, there is no
-  any google calendar associated with current course, so staff has to
-  initialize one at first time by submitting "Initiate course google
-  calendar" button.
+From the very beginning after calendar tab is enabled, there is no
+any google calendar associated with current course, so staff has to
+initialize one at first time by submitting "Initiate course google
+calendar" button.
 
-  Application then creates new Google Calendar (from behalf of Google
-  service account) and associates it with the current Course.
-  This Calendar is private and can't be seen out of service account.
+Application then creates new Google Calendar (from behalf of Google
+service account) and associates it with the current Course.
+This Calendar is private and can't be seen out of service account.
 
-  After initialization new google calendar is rendered on the tab.
+After initialization new google calendar is rendered on the tab.
 
-  Students and Staff can create/update/delete events.
-  Students can't update/delete event they don't own.
-  Staff can.
+Students and Staff can create/update/delete events.
+Students can't update/delete event they don't own.
+Staff can.
 
-  Events may be edited via dialog box(on double click), by dragging
-  (whole event or its start/end border).
+Events may be edited via dialog box(on double click), by dragging
+(whole event or its start/end border).
 
 ADDITIONAL NOTES:
 
-  As the OpenEdx [documentation](https://openedx.atlassian.net/wiki/display/AC/Adding+a+new+course+tab) says:
+  As the [Open edX documentation] says:
 
     The course stores a static list of its tabs in the database, and
     this list is only updated when one of the following actions take place:
@@ -132,3 +132,5 @@ ADDITIONAL NOTES:
     - You update the advanced settings for your course.
     This means that if you have a pre-existing course then it won't
     immediately show a tab even after you've registered the new entry point.
+
+[Open edX documentation]: https://openedx.atlassian.net/wiki/display/AC/Adding+a+new+course+tab
