@@ -17,13 +17,14 @@ log.debug('MAKO_TEMPLATES["main"]: {}'.format(settings.MAKO_TEMPLATES['main']))
 settings.PIPELINE_CSS.update({
     'style-calendar-tab': {
         'source_filenames': [
-            APP_ROOT / 'static/calendar_tab/css/vendor/scheduler/dhtmlxscheduler.css',
+            APP_ROOT / 'static/calendar_tab/css/vendor'/'scheduler/dhtmlxscheduler.css',
         ],
         'output_filename': 'css/calendar-tab.css',
     }
 })
 
-log.debug('PIPELINE_CSS["style-calendar-tab"]: {}'.format(settings.PIPELINE_CSS["style-calendar-tab"]))
+log.debug('PIPELINE_CSS["style-calendar-tab"]: {}'.format(
+    settings.PIPELINE_CSS["style-calendar-tab"]))
 
 settings.PIPELINE_JS.update({
     'calendar_tab': {
@@ -41,5 +42,7 @@ settings.PIPELINE_JS.update({
     },
 })
 
-log.debug('PIPELINE_JS["calendar_tab"]: {}'.format(settings.PIPELINE_JS["calendar_tab"]))
-log.debug('PIPELINE_JS["calendar_tab_vendor"]: {}'.format(settings.PIPELINE_JS["calendar_tab_vendor"]))
+log.debug('PIPELINE_JS["calendar_tab"]: {}'.format(
+    settings.PIPELINE_JS["calendar_tab"]))
+log.debug('PIPELINE_JS["calendar_tab_vendor"]: {}'.format(
+    settings.PIPELINE_JS["calendar_tab_vendor"]))

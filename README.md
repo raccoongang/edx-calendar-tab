@@ -10,30 +10,37 @@ New calendar events may be created by any enrolled student.
 Calendar may be shared by stuff personal with provided google accounts
 (with update permission).
 
-# Installation
+## Installation
 
     sudo -sHu edxapp
     cd
     . edxapp_env
     pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@master#egg=edx-calendar-tab
 
-# Configuration
+## Configuration
 
-## Configure google service account
+### Configure google service account
 
 Google service accounts [documentation](https://developers.google.com/identity/protocols/OAuth2ServiceAccount).
 
 In general process consists of these steps:
 
 * create new Project in [developers console](https://console.developers.google.com/projectselector/iam-admin/serviceaccounts);
-* create new Service Account via Project (with "Owner" role);
-* [enable](https://console.developers.google.com/apis/dashboard)
-Google Calendar API via Project;
-* [create](https://console.developers.google.com/apis/credentials)
-credentials for Service Account (service account key) and save json-api-private-key -
-_you'll need to put it on your server into "/edx/app/edxapp/", for example_;
 
-## Configure edx-platform
+* create new Service Account via Project (with "Owner" role);
+
+* [enable] Google Calendar API via Project;
+
+[enable]: https://console.developers.google.com/apis/dashboard
+
+* [create] credentials for Service Account (service account key)
+
+* save json-api-private-key - _you'll need to put it on your server
+  (into "/edx/app/edxapp/", for example_);
+
+[create]: https://console.developers.google.com/apis/credentials
+
+### Configure edx-platform
 
 Add "edx-calendar-tab" to installed Django apps
 
@@ -46,7 +53,8 @@ and to the list of FEATURES add:
     "ENABLE_CALENDAR": true,
     "GOOGLE_CALENDAR_TAB_PRIVATE_KEY_URL": "/edx/app/edxapp/edx-calendar-tab-google-api-private-key.json"
 
-In "/edx/app/edxapp/edx-platform/lms/urls.py" add __before__ static_tab urls:
+In "/edx/app/edxapp/edx-platform/lms/urls.py" add __before__
+static_tab urls:
 
     if settings.FEATURES.get('ENABLE_CALENDAR'):
         urlpatterns += (
@@ -59,8 +67,7 @@ In "/edx/app/edxapp/edx-platform/lms/urls.py" add __before__ static_tab urls:
            ),
         )
 
-
-# Basic usage
+## Basic usage
 
 From the very beginning after calendar tab is enabled, there is no
 any google calendar associated with current course, so staff has to
@@ -92,3 +99,15 @@ ADDITIONAL NOTES:
     immediately show a tab even after you've registered the new entry point.
 
 [Open edX documentation]: https://openedx.atlassian.net/wiki/display/AC/Adding+a+new+course+tab
+
+## Installed
+
+After installation you should get the following state.
+
+* Studio's Content/Pages has Calendar page:
+
+![Calendar page](doc/img/calendar_studio_view.png)
+
+* LMS's main menu (tabs) has Calendar tab:
+
+![Calendar page](doc/img/calendar_lms_view.png)

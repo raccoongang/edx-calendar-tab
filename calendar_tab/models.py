@@ -20,15 +20,14 @@ class CourseCalendar(models.Model):
     def __str__(self):
         return self.calendar_id
 
-    # TODO: clear calendar if course does not exist (manage command?)
-
 
 @python_2_unicode_compatible
 class CourseCalendarEvent(models.Model):
     """
     Model to control events ownership.
     """
-    course_calendar = models.ForeignKey(CourseCalendar, on_delete=models.CASCADE)
+    course_calendar = models.ForeignKey(CourseCalendar,
+                                        on_delete=models.CASCADE)
     event_id = models.CharField(max_length=255)
     edx_user = models.CharField(max_length=255)
 
@@ -38,4 +37,3 @@ class CourseCalendarEvent(models.Model):
 
     def __str__(self):
         return self.event_id
-

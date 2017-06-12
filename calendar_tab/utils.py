@@ -18,4 +18,6 @@ except (IOError, KeyError) as e:
         "`FEATURES['ENABLE_CALENDAR']` is True."
     )
 
-gcal_service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
+gcal_service = build('calendar', 'v3',
+                     credentials=credentials,
+                     cache_discovery=False)
