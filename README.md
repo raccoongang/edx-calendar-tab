@@ -12,19 +12,10 @@ Calendar may be shared by stuff personal with provided google accounts
 
 # Installation
 
-## Install Package
-
-Installing manually for evaluation and testing:
-
     sudo -sHu edxapp
     cd
     . edxapp_env
-    pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@wowkalucky/event_permissions#egg=edx-calendar-tab
-
-
-## Production installation
-
- TBD
+    pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@master#egg=edx-calendar-tab
 
 # Configuration
 
