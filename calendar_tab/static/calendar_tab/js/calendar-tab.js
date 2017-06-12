@@ -19,4 +19,4 @@
     dp.init(scheduler);
     dp.setTransactionMode("POST", false);
   });
-})(jQuery);
+}(jQuery));
