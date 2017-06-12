@@ -46,43 +46,14 @@ _you'll need to put it on your server into "/edx/app/edxapp/", for example_;
 
 Add "edx-calendar-tab" to installed Django apps
 
-In "/edx/app/edxapp/lms.env.json" add
+In "/edx/app/edxapp/lms.env.json" add:
 
     "ADDL_INSTALLED_APPS": ["calendar_tab"],
 
-In "/edx/app/edxapp/edx-platform/lms/envs/common.py" add
+and to the list of FEATURES add:
 
-    MAKO_TEMPLATES['main']: [
-        ...
-        '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/templates',
-    ]
-
-    PIPELINE_CSS = {
-        ...
-        'style-calendar-tab': {
-            'source_filenames': [
-                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/css/vendor/scheduler/dhtmlxscheduler.css',
-            ],
-            'output_filename': 'css/calendar-tab.css',
-        }
-    }
-
-    PIPELINE_JS = {
-        ...
-        'calendar_tab': {
-            'source_filenames': [
-                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/js/calendar-tab.js',
-            ],
-            'output_filename': 'js/calendar_tab.js',
-        },
-        'calendar_tab_vendor': {
-            'source_filenames': [
-                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/js/vendor/scheduler/_dhtmlxscheduler.js',
-                '/edx/app/edxapp/venvs/edxapp/src/edx-calendar-tab/calendar_tab/static/calendar_tab/js/vendor/scheduler/dhtmlxscheduler_readonly.js',
-            ],
-            'output_filename': 'js/calendar_tab_vendor.js',
-        },
-    }
+    "ENABLE_CALENDAR": true,
+    "GOOGLE_CALENDAR_TAB_PRIVATE_KEY_URL": "/edx/app/edxapp/edx-calendar-tab-google-api-private-key.json"
 
 In "/edx/app/edxapp/edx-platform/lms/urls.py" add __before__ static_tab urls:
 
@@ -97,10 +68,6 @@ In "/edx/app/edxapp/edx-platform/lms/urls.py" add __before__ static_tab urls:
            ),
         )
 
-In "/edx/app/edxapp/lms.envs.json", add to the list of FEATURES:
-
-    "ENABLE_CALENDAR": true,
-    "GOOGLE_CALENDAR_TAB_PRIVATE_KEY_URL": "/edx/app/edxapp/edx-calendar-tab-google-api-private-key.json"
 
 # Basic usage
 
