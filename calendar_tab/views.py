@@ -13,7 +13,8 @@ from django.views.generic import View
 from opaque_keys.edx.keys import CourseKey
 from courseware.access import has_access
 from courseware.courses import get_course_with_access
-from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
+# from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
+from web_fragments.views import FragmentView
 from web_fragments.fragment import Fragment
 
 import pytz
@@ -21,6 +22,7 @@ from dateutil import parser
 
 from .models import CourseCalendar, CourseCalendarEvent
 from .utils import gcal_service
+from . import VENDOR_CSS_URL, VENDOR_JS_URL, VENDOR_PLUGIN_JS_URL, JS_URL
 
 log = logging.getLogger(__name__)
 
@@ -98,10 +100,11 @@ def is_staff(user, course_id):
     return bool(has_access(user, 'staff', course, course_id))
 
 
-class CalendarTabFragmentView(EdxFragmentView):
+class CalendarTabFragmentView(FragmentView):
     """
-    Component implementation of the calendar tab.
+    Fragment view implementation of the calendar tab.
     """
+
     def render_to_fragment(self, request, course_id=None, **kwargs):
         """
         Render the calendar tab to a fragment.
@@ -118,8 +121,10 @@ class CalendarTabFragmentView(EdxFragmentView):
             html = render_to_string('calendar_tab/calendar_tab_fragment.html',
                                     context)
             fragment = Fragment(html)
-            self.add_fragment_resource_urls(fragment)
-
+            fragment.add_css_url(VENDOR_CSS_URL)
+            fragment.add_javascript_url(VENDOR_JS_URL)
+            fragment.add_javascript_url(VENDOR_PLUGIN_JS_URL)
+            fragment.add_javascript_url(JS_URL)
             inline_js = render_to_string(
                 'calendar_tab/calendar_tab_js.template', context)
             fragment.add_javascript(inline_js)
@@ -130,41 +135,10 @@ class CalendarTabFragmentView(EdxFragmentView):
             html = render_to_string('calendar_tab/500_fragment.html')
             return Fragment(html)
 
-    def vendor_js_dependencies(self):
-        """
-        Returns list of vendor JS files that this view depends on.
-        The helper function that it uses to obtain the list of vendor JS files
-        works in conjunction with the Django pipeline to ensure that
-        in development mode the files are loaded individually,
-        but in production just the single bundle is loaded.
-        """
-        dependencies = set(self.get_js_dependencies('calendar_tab_vendor'))
-        return list(dependencies)
-
-    def js_dependencies(self):
-        """
-        Returns list of JS files that this view depends on.
-        The helper function that it uses to obtain the list of JS files
-        works in conjunction with the Django pipeline to ensure that
-        in development mode the files are loaded individually,
-        but in production just the single bundle is loaded.
-        """
-        return self.get_js_dependencies('calendar_tab')
-
-    def css_dependencies(self):
-        """
-        Returns list of CSS files that this view depends on.
-        The helper function that it uses to obtain the list of CSS files
-        works in conjunction with the Django pipeline to ensure that
-        in development mode the files are loaded individually, but in
-        production just the single bundle is loaded.
-        """
-        return self.get_css_dependencies('style-calendar-tab')
-
 
 def events_view(request, course_id):
     """
-    Returns all google calendar events for given course.
+    Return all google calendar events for given course.
     """
     calendar_id = get_calendar_id_by_course_id(course_id)
     try:

@@ -17,6 +17,8 @@ Calendar may be shared by stuff personal with provided google accounts
     . edxapp_env
     pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@master#egg=edx-calendar-tab
 
+Django's collectstatic should be performed.
+
 ## Configuration
 
 ### Configure google service account
