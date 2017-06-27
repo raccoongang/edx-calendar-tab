@@ -13,7 +13,6 @@ from django.views.generic import View
 from opaque_keys.edx.keys import CourseKey
 from courseware.access import has_access
 from courseware.courses import get_course_with_access
-# from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from web_fragments.views import FragmentView
 from web_fragments.fragment import Fragment
 
