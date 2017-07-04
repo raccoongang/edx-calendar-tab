@@ -17,6 +17,11 @@ Calendar may be shared by stuff personal with provided google accounts
     . edxapp_env
     pip install -e git+https://github.com/raccoongang/edx-calendar-tab.git@master#egg=edx-calendar-tab
 
+Django's collectstatic should be performed (change to --settings=devstack for
+devstack installation):
+
+    python edx-platform/manage.py lms collectstatic --settings=aws --noinput
+
 ## Configuration
 
 ### Configure google service account
